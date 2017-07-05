@@ -1,25 +1,45 @@
 const Nightmare = require('nightmare');
+const io = require('../services/socket');
 const emmiter = require('../services/emmiter');
 
 class Test {
+	constructor(account = 'brastemp') {
+		this.url = `http://loja.${account}.com.br/`;
+		this.report;
+	};
 
-	static run(account) {
-		let url = `http://loja.${account}.com.br/`,
-			nightmare = Nightmare({show: true});
+	run() {
+		let nightmare = Nightmare(/*{show: true}*/);
 
-		console.log('route /watcher', account, url);
+		this.report = {
+			site: this.url,
+			online: true,
+			steps: [],
+			data: []
+		};
 
-		return nightmare.goto(url)
-				.evaluate(function(){
+		// console.log('route /watcher', account, url);
+
+		return nightmare.goto(this.url)
+				.evaluate(() => {
 					return document.title;
 				})
 				.end()
-				.then(function(title){
+				.then(title => {
+					this.report.steps.push({load: true});
+					this.report.data.push({'title': title});
+
+					io.emit('watcher.watch', this.report);
 					emmiter.emit('buy.end');
+
 					return title;
 				})
-				.catch(function(err){
-					emmiter.emit('buy.fail');
+				.catch(err => {
+					this.report.online = false;
+
+					io.emit('watcher.watch', this.report);
+					emmiter.emit('buy.fail', err);
+
 					return err;
 				});
 	};

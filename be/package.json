@@ -9,5 +9,9 @@
     "express": "^4.15.3",
     "nightmare": "^2.10.0",
     "socket.io": "^2.0.3"
+  },
+  "scripts": {
+    "b": "node index.js account=brastemp",
+    "c": "node index.js account=consul"
   }
 }

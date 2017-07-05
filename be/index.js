@@ -1,35 +1,36 @@
-// const app = require('express')();
-const io = require('socket.io')(3001);
-const Test = require('./app/Test');
-const emmiter = require('./services/emmiter');
-
 //pega parametro account passado na CLI
 const accountArg = process.argv.reduce((index, value) => { if(value.indexOf('account') >= 0) return value; }).split('=')[1];
 
+// const app = require('express')();
+const Test = require('./app/Test');
+const test = new Test(accountArg);
+// const io = require('./services/socket');
+const emmiter = require('./services/emmiter');
+
 emmiter.on('buy.end', () => {
-	setTimeout(Test.run.bind(this, accountArg), /*1000 * 60 * 60*/5000);
+	setTimeout(test.run.bind(test), /*1000 * 60 * 60*/5000);
 });
 
-emmiter.on('buy.fail', () => {
-	setTimeout(() => {
-		Test.run.bind(this, accountArg)
-	}, /*1000 * 60 * 60*/5000);
+emmiter.on('buy.fail', err => {
+	console.log('has fail', err);
+	// setTimeout(() => {
+	// 	Test.run.bind(this, accountArg)
+	// }, /*1000 * 60 * 605000);*/
 });
 
-Test.run(accountArg)
+test.run()
 	.then(msg => {
 		console.log(msg);
-		io.emit('rodou', {some: 'data'});
 	})
 	.catch(err => {
-		console.log(err);
+		console.log('errorfirst', err);
 	});
 
-io.on('connection', client => {
+/*io.on('connection', client => {
 	console.log(client);
 	client.on('event', function(data){
-		console.log(data)
+		console.log(data);
 	});
-});
+});*/
 
 // app.listen(3000, () => { console.log('running on 3000'); });

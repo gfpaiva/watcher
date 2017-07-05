@@ -15,7 +15,7 @@ class App extends Component {
 			console.log('conect');
 		});
 
-		socket.on('rodou', data => {
+		socket.on('watcher.watch', data => {
 			console.log('run', data);
 		});
 	}
