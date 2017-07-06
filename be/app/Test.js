@@ -10,7 +10,7 @@ class Test {
 	};
 
 	run() {
-		let nightmare = Nightmare({show: true});
+		let nightmare = Nightmare(/*{show: true}*/);
 
 		this.report = {
 			store: this.account,

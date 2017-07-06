@@ -1,4 +1,3 @@
-/* global io: true */
 import React, { Component } from 'react';
 import logo from '../images/whp-logo.png';
 
