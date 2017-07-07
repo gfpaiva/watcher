@@ -8,14 +8,12 @@ const test = new Test(accountArg);
 const emmiter = require('./services/emmiter');
 
 emmiter.on('buy.end', () => {
-	setTimeout(test.run.bind(test),/* 1000 * 60 * 5*/5000);
+	setTimeout(test.run.bind(test), 1000 * 60 * 5);
 });
 
 emmiter.on('buy.fail', err => {
 	console.log('has fail', err);
-	// setTimeout(() => {
-	// 	Test.run.bind(this, accountArg)
-	// }, /*1000 * 60 * 605000);*/
+	setTimeout(test.run.bind(test), 1000 * 60 * 2);
 });
 
 test.run()

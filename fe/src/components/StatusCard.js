@@ -1,13 +1,39 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 
+moment.fn.minutesFromNow = function() {
+	return Math.floor((+new Date() - (+this))/60000);
+}
+
 class StatusCard extends Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
 
 		this.styleWidth = {
 			width: '100px'
 		};
+
+		this.state = {lastRunMinutes: 0};
+		this.timer;
+	};
+
+	_timeAgoHandler() {
+		if(this.props.socket.lastRun) {
+			console.log('timer', this.state.lastRunMinutes++);
+			this.setState({lastRunMinutes: this.state.lastRunMinutes++});
+		}
+	};
+
+	componentDidMount() {
+		this.timer = setInterval(() => { this._timeAgoHandler(); }, 1000 * 60);
+	};
+
+	componentWillReceiveProps(nextProps) {
+		this.setState({lastRunMinutes: 0});
+	};
+
+	componentWillUnmount() {
+		clearInterval(this.timer);
 	}
 
 	render() {
@@ -23,13 +49,13 @@ class StatusCard extends Component {
 					</div>
 					<div className="card-footer">
 						<div className="stats">
-							<i className="glyphicon glyphicon-time"></i> <strong>{(this.props.socket.lastRun) ? `Última verificação ${moment(this.props.socket.lastRun).format('DD/MM/YY, HH:mm:ss')}` : 'Aguardando' }</strong>
+							<i className="glyphicon glyphicon-time"></i> <strong>{(this.props.socket.lastRun) ? `Última verificação há ${(this.state.lastRunMinutes)} minutos` : 'Aguardando' }</strong>
 						</div>
 					</div>
 				</div>
 			</div>
 		);
-	}
+	};
 }
 
 export default StatusCard;
